@@ -1,4 +1,4 @@
-import { Canvas } from "./canvas";
+import { CanvasModel } from "./canvas";
 import { Castomizer, Home } from "./pages";
 
 export const App = () => {
@@ -6,7 +6,7 @@ export const App = () => {
   return (
     <main className="app transition-all ease-in">
       <Home />
-      <Canvas /> 
+      <CanvasModel /> 
       <Castomizer />
     </main>
   )
