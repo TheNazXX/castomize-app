@@ -8,10 +8,67 @@ import {EditorTabs, FilterTabs, DecalTypes} from "../utils/constants";
 import {fadeAnimation, slideAnimation} from "../utils/motion";
 
 import { AIPicker, ColorPicker, Tab, CustomButton, FilePicker } from "../components";
+import { useState } from "react";
 
 export const Castomizer = () => {
 
   const snap = useSnapshot(state);
+
+  const [file, setFile] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [generatingImg, setGeneratingImg] = useState(false);
+  const [activeEditorTab, setActiveEditorTab] = useState("");
+  const [activeFilterTab, setActiveFilterTab] = useState({
+    logoShirtL: true,
+    stylishShirt: false
+  });
+
+  const generateTabContent = () => {
+    switch(activeEditorTab){
+      case "colorpicker":
+        return  <ColorPicker />
+      case "filepicker":
+        return <FilePicker 
+          file={file}
+          setFile={setFile}
+        />
+      case "aipicker":
+        return <AIPicker />
+      default: return null
+    };
+  };
+
+  const handleDecals = (type, result) => {
+    const decalType = DecalTypes[type];
+    state[decalType.stateProperty] = result;
+
+    if(!activeFilterTab[decalType.filterTab]){
+      handleActiveFilterTab(decalType.filterTab)
+    }
+  };
+  
+  const handleActiveFilterTab = (tabName) => {
+    switch(tabName){
+      case "logoShirt":
+        state.isLogoTexture = !activeFilterTab[tabName]
+        break;
+      case "stylishShirt":
+        state.isFullTexture = !activeEditorTab[tabName]
+        break;
+      default:
+        state.isFullTexture = false;
+        state.isLogoTexture = true;
+    }
+  };
+
+  const readFile = () => {
+    reader(file)
+      .then((result) => {
+        handleDecals(type, result);
+        setActiveEditorTab("");
+      })
+  }
+
 
   return (
     <AnimatePresence>
@@ -23,16 +80,18 @@ export const Castomizer = () => {
             {...slideAnimation("left")}
           >
             <div className="flex items-center min-h-screen">
-              <div className="editorstabs-container tabs">
+              <div className="editortabs-container tabs">
                 {EditorTabs.map((tab) => (
                   <Tab 
                     key={tab.name}
                     tab={tab}
                     isFilterTab
                     isActiveTab=""
-                    handleClick={() => {}}
+                    handleClick={() => setActiveEditorTab(tab.name)}
                   />
                 ))}
+
+                {generateTabContent()}
               </div>
             </div>
           </motion.div>
