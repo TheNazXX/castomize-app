@@ -19,7 +19,7 @@ export const Castomizer = () => {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState("");
   const [activeFilterTab, setActiveFilterTab] = useState({
-    logoShirtL: true,
+    logoShirt: true,
     stylishShirt: false
   });
 
@@ -31,6 +31,7 @@ export const Castomizer = () => {
         return <FilePicker 
           file={file}
           setFile={setFile}
+          readFile={readFile}
         />
       case "aipicker":
         return <AIPicker />
@@ -53,15 +54,23 @@ export const Castomizer = () => {
         state.isLogoTexture = !activeFilterTab[tabName]
         break;
       case "stylishShirt":
-        state.isFullTexture = !activeEditorTab[tabName]
+        state.isFullTexture = !activeFilterTab[tabName]
         break;
       default:
         state.isFullTexture = false;
         state.isLogoTexture = true;
     }
+
+
+    setActiveFilterTab(prevState => {
+      return {
+        ...prevState,
+        [tabName]: !prevState[tabName]
+      };
+    });
   };
 
-  const readFile = () => {
+  const readFile = (type) => {
     reader(file)
       .then((result) => {
         handleDecals(type, result);
@@ -112,7 +121,15 @@ export const Castomizer = () => {
             className="filtertabs-container"
             {...slideAnimation("up")}
           >
-
+              {FilterTabs.map((tab) => (
+                <Tab 
+                  key={tab.name}
+                  tab={tab}
+                  isFilterTab
+                  isActiveTab={activeFilterTab[tab.name]}
+                  handleClick={() => handleActiveFilterTab(tab.name)}
+                />
+              ))}
           </motion.div>
         </>
       )}
