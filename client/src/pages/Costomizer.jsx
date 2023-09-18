@@ -34,10 +34,28 @@ export const Castomizer = () => {
           readFile={readFile}
         />
       case "aipicker":
-        return <AIPicker />
+        return <AIPicker 
+          prompt={prompt}
+          setPrompt={setPrompt}
+          generatingImg={generatingImg}
+          handleSubmit
+        />
       default: return null
     };
   };
+
+
+  const handleSubmit = async (type) => {
+    if(!prompt) return alert("Please enter a promt");
+    try{
+
+    }catch(err){
+      alert(err)
+    }finally{
+      setGeneratingImg(false);
+      setActiveEditorTab("");
+    }
+  }
 
   const handleDecals = (type, result) => {
     const decalType = DecalTypes[type];
