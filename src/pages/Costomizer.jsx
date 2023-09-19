@@ -7,7 +7,7 @@ import {downloadCanvasToImage, reader} from "../utils/helpers";
 import {EditorTabs, FilterTabs, DecalTypes} from "../utils/constants";
 import {fadeAnimation, slideAnimation} from "../utils/motion";
 
-import { AIPicker, ColorPicker, Tab, CustomButton, FilePicker } from "../components";
+import { ColorPicker, Tab, CustomButton, FilePicker } from "../components";
 import { useState } from "react";
 
 export const Castomizer = () => {
@@ -15,8 +15,7 @@ export const Castomizer = () => {
   const snap = useSnapshot(state);
 
   const [file, setFile] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [generatingImg, setGeneratingImg] = useState(false);
+  
   const [activeEditorTab, setActiveEditorTab] = useState("");
   const [activeFilterTab, setActiveFilterTab] = useState({
     logoShirt: true,
@@ -33,44 +32,10 @@ export const Castomizer = () => {
           setFile={setFile}
           readFile={readFile}
         />
-      case "aipicker":
-        return <AIPicker 
-          prompt={prompt}
-          setPrompt={setPrompt}
-          generatingImg={generatingImg}
-          handleSubmit={handleSubmit}
-        />
       default: return null
     };
   };
 
-
-  const handleSubmit = async (type) => {
-    if(!prompt) return alert("Please enter a prompt");
-    try{
-      setGeneratingImg(true);
-
-      const response = await fetch("http://localhost:8080/api/v1/dalle", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          prompt,
-
-        })
-      });
-
-      const data = await response.json();
-      console.log(data)
-      // handleDecals(type, `data:image/png:base64,${data.photo}`)
-    }catch(err){
-      alert(err)
-    }finally{
-      setGeneratingImg(false);
-      setActiveEditorTab("");
-    }
-  }
 
   const handleDecals = (type, result) => {
     const decalType = DecalTypes[type];
@@ -108,7 +73,7 @@ export const Castomizer = () => {
       .then((result) => {
         handleDecals(type, result);
         setActiveEditorTab("");
-      })
+      }).catch((error) => alert("Please load the file"))
   }
 
 
